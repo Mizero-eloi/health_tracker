@@ -1,4 +1,4 @@
-# 🌍 Global Health Tracker
+#  Global Health Tracker
 
 A web application that displays live COVID-19 statistics by country using the [disease.sh](https://disease.sh) Open Disease Data API. Users can search, filter by continent, and sort by various metrics to explore global health data meaningfully.
 
