@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Global Health Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>🌍 Global Health Tracker</h1>
+    <p>Live COVID-19 statistics by country — search, filter, and sort the data</p>
+  </header>
+
+  <section id="global-stats">
+    <h2>Global Overview</h2>
+    <div id="global-cards" class="cards-row">
+      <div class="stat-card" id="stat-cases">
+        <span class="label">Total Cases</span>
+        <span class="value" id="g-cases">Loading...</span>
+      </div>
+      <div class="stat-card" id="stat-deaths">
+        <span class="label">Total Deaths</span>
+        <span class="value" id="g-deaths">Loading...</span>
+      </div>
+      <div class="stat-card" id="stat-recovered">
+        <span class="label">Recovered</span>
+        <span class="value" id="g-recovered">Loading...</span>
+      </div>
+      <div class="stat-card" id="stat-active">
+        <span class="label">Active Cases</span>
+        <span class="value" id="g-active">Loading...</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="controls">
+    <input type="text" id="search" placeholder="🔍 Search country..." />
+    <select id="continent-filter">
+      <option value="">All Continents</option>
+      <option value="Africa">Africa</option>
+      <option value="Asia">Asia</option>
+      <option value="Europe">Europe</option>
+      <option value="North America">North America</option>
+      <option value="South America">South America</option>
+      <option value="Oceania">Oceania</option>
+    </select>
+    <select id="sort-by">
+      <option value="cases">Sort by Cases</option>
+      <option value="deaths">Sort by Deaths</option>
+      <option value="recovered">Sort by Recovered</option>
+      <option value="active">Sort by Active</option>
+      <option value="population">Sort by Population</option>
+    </select>
+    <select id="sort-order">
+      <option value="desc">Highest First</option>
+      <option value="asc">Lowest First</option>
+    </select>
+  </section>
+
+  <div id="error-banner" class="hidden">
+    ⚠️ <span id="error-message"></span>
+  </div>
+
+  <div id="loading" class="hidden">Loading data...</div>
+
+  <section id="results">
+    <table id="country-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Country</th>
+          <th>Cases</th>
+          <th>Deaths</th>
+          <th>Recovered</th>
+          <th>Active</th>
+          <th>Population</th>
+          <th>Case Fatality %</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+    <p id="no-results" class="hidden">No countries match your search.</p>
+  </section>
+
+  <footer>
+    <p>Data sourced from <a href="https://disease.sh" target="_blank">disease.sh</a> — Open Disease Data API</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
