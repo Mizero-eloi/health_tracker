@@ -94,70 +94,64 @@ The app will be available at: **http://localhost:8080**
 
 ---
 
-## Docker Deployment
+# Health Tracker - Deployment
 
-### Prerequisites
+## Servers & Load Balancer
 
-- [Docker](https://docs.docker.com/get-docker/) installed
-- [Docker Hub](https://hub.docker.com/) account
+Web01: http://18.207.188.40  
+Web02: http://34.201.39.158  
+Load Balancer: http://3.89.215.159  
 
-### 1. Build the Image
-
-```bash
-docker build -t eloi/health-tracker:v1 .
-```
-
-### 2. Test Locally
-
-```bash
-docker run -p 8080:8080 eloi/health-tracker:v1
-```
-
-Visit **http://localhost:8080** to verify it works.
-
-### 3. Push to Docker Hub
-
-```bash
-docker login
-docker push eloi/health-tracker:v1
-
-# Also tag as latest
-docker tag eloi/health-tracker:v1 YOUR_DOCKERHUB_USERNAME/health-tracker:latest
-docker push eloi/health-tracker:latest
-```
-
-Docker Hub image: `https://hub.docker.com/r/eloi/health-tracker`
-
-### 4. Deploy on Web01 and Web02
-
-SSH into each server and run:
-
-```bash
-# Pull the image
-docker pull eloi/health-tracker:v1
-
-# Run the container
-docker run -d \
-  --name app \
-  --restart unless-stopped \
-  -p 8080:8080 \
-  -e SERVER_NAME=web01 \
-  eloi/health-tracker:v1
-```
-
-> Replace `-e SERVER_NAME=web01` with `web02` on the second server. This is reflected in the `/health` endpoint response so you can confirm which server is responding.
-
-Verify each instance is reachable:
-
-```bash
-curl http://web-01:8080/health
-# Expected: {"status":"ok","server":"web01"}
-
-curl http://web-02:8080/health
-# Expected: {"status":"ok","server":"web02"}
-```
+Users should access the app through the load balancer to ensure traffic is distributed evenly.
 
 ---
+
+## Web Server Setup (Both Servers)
+
+```bash
+sudo apt update
+sudo apt install nodejs npm nginx git -y
+
+git clone https://github.com/Mizero-eloi/health_tracker.git
+cd health_tracker/health-tracker
+
+npm install
+
+sudo npm install -g pm2
+pm2 start server.js
+pm2 save
+pm2 startup
+Nginx (Web Server)
+sudo nano /etc/nginx/sites-available/health_tracker
+server {
+    listen 80;
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+    }
+}
+sudo systemctl restart nginx
+Load Balancer Setup
+sudo apt update
+sudo apt install nginx -y
+sudo nano /etc/nginx/sites-available/load_balancer
+upstream backend {
+    server 18.207.188.40;
+    server 34.201.39.158;
+}
+
+server {
+    listen 80;
+    location / {
+        proxy_pass http://backend;
+    }
+}
+sudo ln -s /etc/nginx/sites-available/load_balancer /etc/nginx/sites-enabled/
+sudo rm /etc/nginx/sites-enabled/default
+sudo systemctl restart nginx
+Final Access
+
+http://3.89.215.159
+
 
 ## Load Balancer Configuration
 
